@@ -44,16 +44,27 @@
 }
 
 .buttonSubmit {
-    @apply bg-blue-400 hover:bg-blue-500 rounded-xl p-2 m-2 mb-4 w-xs text-white text-center shadow-lg
+    @apply bg-blue-400 hover:bg-blue-500
 }
 
-.buttonSubmit:active {
+.buttonEdit {
+    @apply bg-yellow-400 hover:bg-yellow-500
+}
+
+.buttonDelete {
+    @apply bg-red-400 hover:bg-red-500
+}
+
+.page {
+    @apply flex justify-center items-center h-screen bg-blue-50
+}
+.buttonSubmit:active, .buttonEdit:active, .buttonDelete:active {
     transform: translateY(1px);
     /* Creates a slight downward shift */
     box-shadow: 0 0 7px rgba(0, 0, 0, 0.6) inset;
     /* Simulates a pressed state */
 }
 
-.page { 
-    @apply flex justify-center items-center h-screen bg-blue-50
+.button, .buttonSubmit, .buttonEdit, .buttonDelete {
+    @apply rounded-xl p-2 m-2 mb-4 w-xs text-white text-center shadow-lg
 }

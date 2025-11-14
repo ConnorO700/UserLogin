@@ -20,7 +20,7 @@ async function Get(url: string) {
     try {
         var result = await axios.get(url)
             .then((response: any) => {
-                return response.blob();
+                return response.data;
             })
     }
     catch (error) {

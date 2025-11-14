@@ -58,8 +58,9 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
         const error = new ResponseError(401, "Unauthorized!");
         return next(error);
     }
+    const id = Users.find(u => u.email == user.email)?.id;
     res.status(200)
-        .json({ token: "eyASDFGWgsgaeafsghh245628yfbn21br9gfw9h219br9gfh9wsf.2384y98fhn2r0ufhwsfw2f.8u2385hhbbwbiuhbwsfgy8wgebribwf9" })
+        .json({ id:id, token: "eyASDFGWgsgaeafsghh245628yfbn21br9gfw9h219br9gfh9wsf.2384y98fhn2r0ufhwsfw2f.8u2385hhbbwbiuhbwsfgy8wgebribwf9" })
 }
 
 const editUser = (req: Request, res: Response, next: NextFunction) => {

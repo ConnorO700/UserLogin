@@ -17,7 +17,7 @@ function loginPage() {
     const handleLogin = async () => {
         const success = await ApiEndpoints.login({ email: email, password: password });
         if (success.token) {
-            navigate('/homepage');
+            navigate('/homepage', { state: { id: success.id } });
         }
     }
 
