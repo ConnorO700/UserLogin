@@ -3,6 +3,7 @@ import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
 import { Link, useLocation } from 'react-router-dom';
+import type { ChangeEvent } from 'react';
 
 interface User {
     name: string,
@@ -22,8 +23,7 @@ function homePage() {
     useEffect(() => {
         const fetchUser = async () => {
             const user = await ApiEndpoints.getUserById(id);
-            console.log(id);
-            console.log(user);
+
             if (user) {
                 setName(user.name);
                 setEmail(user.email);
@@ -33,6 +33,9 @@ function homePage() {
         fetchUser();
     }, []);
 
+    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    }
 
     return (
         <>
@@ -41,7 +44,7 @@ function homePage() {
                     <div className='flex flex-col items-center justify-center mt-auto'>
                         <FormField input={name} setInput={setName} label="Name:" />
                         <FormField input={email} setInput={setEmail} label="Email:" />
-                        <PasswordField label="Password:" password={password} setPassword={setPassword} />
+                        <PasswordField label="Password:" password={password} onChange={handlePasswordChange} />
                         <div className='noSelect buttonEdit'>Edit User</div>
                         <div className='noSelect buttonDelete'>Delete User</div>
                         <Link to="/" className='noSelect buttonSubmit'>Logout</Link>

@@ -4,7 +4,7 @@ import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import type { ChangeEvent } from 'react';
 
 function loginPage() {
 
@@ -21,16 +21,20 @@ function loginPage() {
         }
     }
 
+    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    }
+
 
     return (
         <>
             <div className='page'>
-                <div className='flex justify-center items-center w-sm h-1/3 bg-white shadow-xl rounded-xl'>
+                <div className='flex justify-center items-center w-sm h-80 bg-white shadow-xl rounded-xl'>
 
                     <div className='flex flex-col items-center justify-center mt-auto'>
                         <img className="noSelect" src={login} alt="login"></img>
                         <FormField input={email} setInput={setEmail} label="Email:" />
-                        <PasswordField label="Password:" password={password} setPassword={setPassword} />
+                        <PasswordField label="Password:" password={password} onChange={handlePasswordChange} />
 
                         <Link to="/signup" className='link clickable'>create new account?</Link>
 
