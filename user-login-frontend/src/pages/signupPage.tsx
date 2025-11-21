@@ -33,6 +33,7 @@ function signupPage() {
   const [passwordHasUpper, setpasswordHasUpper] = useState(false);
   const [passwordHasNumber, setPasswordHasNumber] = useState(false);
   const [passwordHasSpecial, setPasswordHasSpecial] = useState(false);
+  const [passwordTips, setPasswordTips] = useState(true);
   const navagate = useNavigate();
   const clearState = () => {
     setName("");
@@ -53,17 +54,18 @@ function signupPage() {
   }
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  }
-
-  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const pass = e.target.value;
-    setConfirmPassword(pass);
+    setPassword(pass);
     setPasswordHas12(pass.length > 11);
     setPasswordHasLower(uppercaseRegex.test(pass));
     setpasswordHasUpper(lowercaseRegex.test(pass));
     setPasswordHasNumber(numberRegex.test(pass));
     setPasswordHasSpecial(specialCharRegex.test(pass));
+  }
+
+  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const pass = e.target.value;
+    setConfirmPassword(pass);
   }
 
   const accepted = (val: boolean): string => {
@@ -72,17 +74,18 @@ function signupPage() {
 
   return (
     <div className='page'>
-      <div className='flex relative justify-center items-center w-sm h-132 shadow-2xl bg-white rounded-xl'>
+      <div className='flex relative justify-center items-center w-sm h-auto shadow-2xl bg-white rounded-xl'>
 
         <div className='flex flex-col items-center justify-center mt-auto'>
-          <div className='absolute noSelect top-2 font-bold text-5xl'>
+          <div className='noSelect m-2 font-bold text-5xl'>
             Sign up
           </div>
           <FormField input={name} setInput={setName} label="Name:" />
           <FormField input={email} setInput={setEmail} label="Email:" />
-          <PasswordField label="Password:" password={password} error={notSamePasswords} onChange={handlePasswordChange} />
+          <PasswordField label="Password:" password={password} error={notSamePasswords} onChange={handlePasswordChange} onSelect={() => { setPasswordTips(false) }} />
           <PasswordField label="Confirm:" password={confirmPassword} error={notSamePasswords} onChange={handleConfirmPasswordChange} />
-          <div className='w-xs border-1 text-center border-gray-300 rounded-xl shadow-lg'>{`Your password must contain:`}
+          <div hidden={passwordTips} className='w-xs border-1 text-center border-gray-300 rounded-xl shadow-lg'>
+            <div>{`Your password must contain:`}</div>
             <div className={accepted(passwordHas12)}>{`At least 12 characters`}</div>
             <div className={accepted(passwordHasLower)}>{`Lower case letters (a-z)`}</div>
             <div className={accepted(passwordHasUpper)}>{`Upper case letters (A-Z)`}</div>

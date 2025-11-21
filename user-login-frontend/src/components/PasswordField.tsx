@@ -4,17 +4,18 @@ interface ComponentProps {
     label: string,
     password: string,
     error?: boolean,
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    onSelect?: (e: ChangeEvent<HTMLInputElement>) => void,
 }
 
-function PasswordField({ label, password, error = false, onChange=()=>{} }: ComponentProps) {
+function PasswordField({ label, password, error = false, onChange = () => { }, onSelect = () => { } }: ComponentProps) {
     const styles = error ? 'textInputBoxError shaking-element' : 'textInputBox'
-  
+
 
     return (
         <div className={styles}>
             <div className='textInputLabel noSelect'>{label}</div>
-            <input type='password' className='textInput' onChange={onChange} value={password} ></input>
+            <input type='password' className='textInput' onChange={onChange} onSelect={onSelect} value={password} ></input>
         </div>
     )
 }

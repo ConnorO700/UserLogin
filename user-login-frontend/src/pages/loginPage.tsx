@@ -29,10 +29,10 @@ function loginPage() {
     return (
         <>
             <div className='page'>
-                <div className='flex justify-center items-center w-sm h-80 bg-white shadow-xl rounded-xl'>
+                <div className='flex justify-center items-center w-sm h-auto bg-white shadow-xl rounded-xl'>
 
                     <div className='flex flex-col items-center justify-center mt-auto'>
-                        <img className="noSelect" src={login} alt="login"></img>
+                        <img className="noSelect m-4" src={login} alt="login"></img>
                         <FormField input={email} setInput={setEmail} label="Email:" />
                         <PasswordField label="Password:" password={password} onChange={handlePasswordChange} />
 
