@@ -1,24 +1,32 @@
 import type { Request, Response, NextFunction } from 'express';
 import ResponseError from '../middleware/ResponseError.ts';
+import jwt from '../util/jwtHandler.tsx'
 interface User {
     id?: number,
     name: string,
     email: string,
+    roles?: string[],
+    password: string,
+}
+
+interface LoginAttempt {
+    email: string,
     password: string
 }
 
+
 let Users: Array<User> = [
     {
-        id: 0, name:"firstuser", email: "admin", password: "1234"
+        id: 0, name: "firstuser", email: "admin", password: "1234", roles:[]
     }
 ];
 
-const trimUser = (user :User) => {
-    return {name: user.name.trim(), email: user.email.trim(), password:user.password} 
+const trimUser = (user: Pick<User, 'name' | 'email' | 'password'>) => {
+    return { name: user.name.trim(), email: user.email.trim(), password: user.password }
 }
 
 const createUser = (req: Request, res: Response, next: NextFunction) => {
-    const newUser: User = trimUser(req.body);
+    const newUser: Pick<User, 'name' | 'email' | 'password'> = trimUser(req.body);
     if (!newUser || (newUser.email.length === 0 || newUser.password.length === 0 || newUser.name.length === 0)) {
         const error = new ResponseError(400, "request body was missing or incomplete");
         return next(error);
@@ -28,7 +36,7 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         return next(error);
     }
 
-    Users.push({id: Users.length, ...newUser });
+    Users.push({ id: Users.length, ...newUser, roles:[] });
     const user = Users[Users.length - 1];
     res.status(201)
         .json(user);
@@ -47,20 +55,26 @@ const getUser = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const loginUser = (req: Request, res: Response, next: NextFunction) => {
-    const user: User = req.body;
-    
-    const index = Users.findIndex(u => u.email == user.email);
+    const login: LoginAttempt = req.body;
+
+    const index = Users.findIndex(u => u.email == login.email);
     if (index == -1) {
         const error = new ResponseError(404, "No such user exists");
         return next(error);
     }
-    if (user.password != Users[index]?.password) {
+    if (login.password != Users[index]?.password) {
         const error = new ResponseError(401, "Unauthorized!");
         return next(error);
     }
-    const id = Users.find(u => u.email == user.email)?.id;
+
+    const user : Exclude<User, 'password'> = Users[index];
+    const jwt = require('jsonwebtoken');
+    //const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    const token = jwt.encode()
+
     res.status(200)
-        .json({ id:id, token: "eyASDFGWgsgaeafsghh245628yfbn21br9gfw9h219br9gfh9wsf.2384y98fhn2r0ufhwsfw2f.8u2385hhbbwbiuhbwsfgy8wgebribwf9" })
+        .json({ user: user, token: token })
 }
 
 const editUser = (req: Request, res: Response, next: NextFunction) => {

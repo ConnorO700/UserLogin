@@ -1,7 +1,7 @@
 import react from 'react'
 import axios from 'axios'
 
-const baseurl = 'http://localhost:8001'
+const baseurl = import.meta.env.VITE_BACKEND_PORT;
 
 interface User {
     name: string,

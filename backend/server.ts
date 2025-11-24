@@ -5,11 +5,12 @@ import logger from './middleware/logger.ts';
 import notFound from './middleware/notFound.ts';
 import errorHandler from './middleware/error.ts';
 
+
 export interface ProcessEnv {
     [key: string]: string | undefined
 }
 const app = express();
-const port = 8001;
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());

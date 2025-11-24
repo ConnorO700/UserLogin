@@ -37,7 +37,6 @@ function loginPage() {
                         <PasswordField label="Password:" password={password} onChange={handlePasswordChange} />
 
                         <Link to="/signup" className='link clickable'>create new account?</Link>
-
                         <div className='noSelect buttonSubmit' onClick={handleLogin}>Login</div>
                     </div>
 

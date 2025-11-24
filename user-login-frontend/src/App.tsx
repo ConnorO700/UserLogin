@@ -2,6 +2,7 @@ import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } 
 import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
 import HomePage from './pages/homePage';
+
 const router = createBrowserRouter(createRoutesFromElements(
   <>
     <Route path="/" element={<LoginPage />} />
