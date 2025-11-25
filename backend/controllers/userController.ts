@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import ResponseError from '../middleware/ResponseError.ts';
 import jwt from '../util/jwtHandler.tsx'
+
 interface User {
     id?: number,
     name: string,
@@ -9,17 +10,29 @@ interface User {
     password: string,
 }
 
+type publicUser = Omit<User, 'email' | 'password'>;
+
 interface LoginAttempt {
     email: string,
     password: string
 }
 
-
 let Users: Array<User> = [
     {
-        id: 0, name: "firstuser", email: "admin", password: "1234", roles:[]
+        id: 0, name: "firstuser", email: "admin", password: "1234", roles: []
+    },
+    {
+        id: 1, name: "connor", email: "Connor700@gmail.com", password: "Hoplogin9387!", roles: []
     }
 ];
+
+function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+    const newObj = {...obj};
+    for (const key of keys){
+        delete newObj[key];
+    }
+    return newObj as Omit<T, K>;
+}
 
 const trimUser = (user: Pick<User, 'name' | 'email' | 'password'>) => {
     return { name: user.name.trim(), email: user.email.trim(), password: user.password }
@@ -31,12 +44,12 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         const error = new ResponseError(400, "request body was missing or incomplete");
         return next(error);
     }
-    if (Users.find(u => u.email === newUser.email)) {
+    if (Users.find(u => u.email.toLocaleLowerCase() === newUser.email.toLocaleLowerCase())) {
         const error = new ResponseError(400, "This email is already in use!");
         return next(error);
     }
 
-    Users.push({ id: Users.length, ...newUser, roles:[] });
+    Users.push({ id: Users.length, ...newUser, roles: [] });
     const user = Users[Users.length - 1];
     res.status(201)
         .json(user);
@@ -54,10 +67,15 @@ const getUser = (req: Request, res: Response, next: NextFunction) => {
         .json(user);
 }
 
+const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
+    res.status(200)
+        .json(Users);
+}
+
 const loginUser = (req: Request, res: Response, next: NextFunction) => {
     const login: LoginAttempt = req.body;
 
-    const index = Users.findIndex(u => u.email == login.email);
+    const index = Users.findIndex(u => u.email.toLocaleLowerCase() == login.email.toLocaleLowerCase());
     if (index == -1) {
         const error = new ResponseError(404, "No such user exists");
         return next(error);
@@ -67,11 +85,10 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
         return next(error);
     }
 
-    const user : Exclude<User, 'password'> = Users[index];
-    const jwt = require('jsonwebtoken');
-    //const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const user: publicUser = omit(Users[index],['email', 'password'] );
 
-    const token = jwt.encode()
+    //const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.encode(user);
 
     res.status(200)
         .json({ user: user, token: token })
@@ -115,6 +132,7 @@ const userController = {
     createUser: (req: Request, res: Response, next: NextFunction) => createUser(req, res, next),
     loginUser: (req: Request, res: Response, next: NextFunction) => loginUser(req, res, next),
     getUser: (req: Request, res: Response, next: NextFunction) => getUser(req, res, next),
+    getAll: (req: Request, res: Response, next: NextFunction) => getAllUsers(req, res, next),
     editUser: (req: Request, res: Response, next: NextFunction) => editUser(req, res, next),
     deleteUser: (req: Request, res: Response, next: NextFunction) => deleteUser(req, res, next),
 }

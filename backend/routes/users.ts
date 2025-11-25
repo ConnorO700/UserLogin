@@ -1,16 +1,16 @@
 import express from 'express';
-import lc from '../controllers/loginController.ts';
+import lc from '../controllers/userController.ts';
+import jwtMiddleware from '../middleware/validate.ts';
+
 const router = express.Router();
 
-router.post('/create', lc.createUser );
+router.get("/", jwtMiddleware, lc.getAll);
 
-router.post('/login', lc.loginUser );
+router.get('/:id', jwtMiddleware, lc.getUser);
 
-router.get('/:id', lc.getUser );
+router.put('/', jwtMiddleware, lc.editUser);
 
-router.put('/', lc.editUser);
-
-router.delete('/', lc.deleteUser);
+router.delete('/', jwtMiddleware, lc.deleteUser);
 
 
 export default router;
