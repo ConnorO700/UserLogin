@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import login from './routes/login.ts'
-import users from './routes/users.ts';
-import logger from './middleware/logger.ts';
-import notFound from './middleware/notFound.ts';
-import errorHandler from './middleware/error.ts';
+import login from './routes/login.mts'
+import users from './routes/users.mts';
+import logger from './middleware/logger.mts';
+import notFound from './middleware/notFound.mts';
+import errorHandler from './middleware/error.mts';
 import bearerToken from 'express-bearer-token';
 
 export interface ProcessEnv {

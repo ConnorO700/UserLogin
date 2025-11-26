@@ -1,5 +1,5 @@
 import express from 'express';
-import lc from '../controllers/userController.ts';
+import lc from '../controllers/userController.mts';
 const router = express.Router();
 
 router.post('/create', lc.createUser);

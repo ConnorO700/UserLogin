@@ -20,7 +20,6 @@ function checkSumGen(head: string, body: string) {
         day: 'numeric',
         hour: 'numeric'
     });
-    console.log(localizedDate);
     var hash = crypto.createHmac('sha512', key + localizedDate);
     var checkSum = hash.update(checkSumStr).digest('base64');
     return checkSum;

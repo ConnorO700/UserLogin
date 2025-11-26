@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import ResponseError from '../middleware/ResponseError.ts';
-import jwt from '../util/jwtHandler.tsx'
+import ResponseError from '../middleware/ResponseError.mts';
+import jwt from '../util/jwtHandler.mts'
 
 interface User {
     id?: number,

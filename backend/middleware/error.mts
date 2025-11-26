@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import ResponseError from './ResponseError.ts';
+import ResponseError from './ResponseError.mts';
 
 const errorHandler = (err : ResponseError, req : Request, res : Response, next : NextFunction) => {
     if (err.statusCode) {
