@@ -1,11 +1,11 @@
 import crypto, { randomBytes } from 'crypto'
 
 function encode(password: string) {
-    const salt = randomBytes(length).toString('utf-8');
+    const salt : string = randomBytes(15).toString('utf-8');
     return {hash:hasher(password, salt), salt:salt};
 }
 
-function check(password: string, salt: string, savedHash: string) : boolean {
+function check(password: string, savedHash: string, salt: string) : boolean {
     return savedHash === hasher(password, salt);
 }
 
