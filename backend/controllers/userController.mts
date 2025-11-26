@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import ResponseError from '../middleware/ResponseError.mts';
 import jwt from '../util/jwtHandler.mts'
+import User from '../models/User.mjs'
 
 interface User {
     id?: number,
@@ -49,6 +50,7 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         return next(error);
     }
 
+    User.create({...newUser})
     Users.push({ id: Users.length, ...newUser, roles: [] });
     const user = Users[Users.length - 1];
     res.status(201)
@@ -129,12 +131,12 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
 
 
 const userController = {
-    createUser: (req: Request, res: Response, next: NextFunction) => createUser(req, res, next),
-    loginUser: (req: Request, res: Response, next: NextFunction) => loginUser(req, res, next),
-    getUser: (req: Request, res: Response, next: NextFunction) => getUser(req, res, next),
-    getAll: (req: Request, res: Response, next: NextFunction) => getAllUsers(req, res, next),
-    editUser: (req: Request, res: Response, next: NextFunction) => editUser(req, res, next),
-    deleteUser: (req: Request, res: Response, next: NextFunction) => deleteUser(req, res, next),
+    createUser: createUser,
+    loginUser: loginUser,
+    getUser: getUser,
+    getAll: getAllUsers,
+    editUser: editUser,
+    deleteUser: deleteUser,
 }
 
 

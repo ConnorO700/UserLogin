@@ -6,12 +6,15 @@ import logger from './middleware/logger.mts';
 import notFound from './middleware/notFound.mts';
 import errorHandler from './middleware/error.mts';
 import bearerToken from 'express-bearer-token';
+import db from './MongoDB.mjs'
 
 export interface ProcessEnv {
     [key: string]: string | undefined
 }
 const app = express();
 const port = process.env.PORT;
+
+db();
 
 app.use(cors());
 app.use(express.json());

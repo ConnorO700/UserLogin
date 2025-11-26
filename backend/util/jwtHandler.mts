@@ -49,9 +49,9 @@ function decode(str: string) {
     return hash === checkSum ? JSON.parse(decodeBase64(body.toString())) : false;
 }
 
-const jwtController = {
+const jwtHandler = {
     encode: encode,
     decode: decode
 };
 
-export default jwtController;
+export default jwtHandler;
