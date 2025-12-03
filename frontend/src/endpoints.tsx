@@ -10,8 +10,8 @@ interface User {
 }
 
 const ApiEndpoints = {
-    createUser: (body: User) => { return Post(`${baseurl}/api/users/create`, body) },
-    login: (body: Omit<User, 'name'>) => { return Post(`${baseurl}/api/users/login`, body) },
+    createUser: (body: User) => { return Post(`${baseurl}/api/create`, body) },
+    login: (body: Omit<User, 'name'>) => { return Post(`${baseurl}/api/login`, body) },
     getUserById: (id: number) => { return Get(`${baseurl}/api/users/${id}`) },
 }
 
