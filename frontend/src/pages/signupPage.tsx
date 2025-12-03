@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
-import endpoints from '../endpoints';
+import ApiEndpoints from '../endpoints';
 import { useNavigate } from 'react-router-dom';
 import type { ChangeEvent } from 'react';
 interface User {
@@ -16,12 +16,13 @@ interface label {
 }
 
 function signupPage() {
+  const api = ApiEndpoints();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [notSamePasswords, setNotSamePasswords] = useState(false);
+  const [samePasswords, setSamePasswords] = useState(true);
 
   const uppercaseRegex = /[A-Z]/;
   const lowercaseRegex = /[a-z]/;
@@ -34,37 +35,54 @@ function signupPage() {
   const [passwordHasNumber, setPasswordHasNumber] = useState(false);
   const [passwordHasSpecial, setPasswordHasSpecial] = useState(false);
   const [passwordTips, setPasswordTips] = useState(true);
+  const submitConditions = (
+    email.length != 0 &&
+    password.length != 0 &&
+    name.length != 0 &&
+    password == confirmPassword &&
+    passwordHas12 &&
+    passwordHasLower &&
+    passwordHasUpper &&
+    passwordHasNumber &&
+    passwordHasSpecial
+  );
   const navagate = useNavigate();
   const clearState = () => {
     setName("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
-    setNotSamePasswords(false);
+    setSamePasswords(true);
   }
 
   const handleSubmitClick = () => {
-    const IsNotSamePassword = password != confirmPassword;
-    setNotSamePasswords(IsNotSamePassword);
-    if (!IsNotSamePassword && (name.length != 0 && email.length != 0 && password.length != 0)) {
-      endpoints.createUser({ name: name, email: email, password: password })
+    if (submitConditions) {
+      api.createUser({ name: name, email: email, password: password })
       navagate('/', { state: { forwardEmail: email, forwardPassword: password } });
       clearState();
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmitClick();
+    }
+  };
+
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const pass = e.target.value;
+    setSamePasswords(pass === confirmPassword)
     setPassword(pass);
     setPasswordHas12(pass.length > 11);
-    setPasswordHasLower(uppercaseRegex.test(pass));
-    setpasswordHasUpper(lowercaseRegex.test(pass));
+    setPasswordHasLower(lowercaseRegex.test(pass));
+    setpasswordHasUpper(uppercaseRegex.test(pass));
     setPasswordHasNumber(numberRegex.test(pass));
     setPasswordHasSpecial(specialCharRegex.test(pass));
   }
 
   const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const pass = e.target.value;
+    setSamePasswords(password === pass);
     setConfirmPassword(pass);
   }
 
@@ -82,8 +100,8 @@ function signupPage() {
           </div>
           <FormField input={name} setInput={setName} label="Name:" />
           <FormField input={email} setInput={setEmail} label="Email:" />
-          <PasswordField label="Password:" password={password} error={notSamePasswords} onChange={handlePasswordChange} onSelect={() => { setPasswordTips(false) }} />
-          <PasswordField label="Confirm:" password={confirmPassword} error={notSamePasswords} onChange={handleConfirmPasswordChange} />
+          <PasswordField label="Password:" password={password} error={!samePasswords} onChange={handlePasswordChange} onSelect={() => { setPasswordTips(false) }} />
+          <PasswordField label="Confirm:" password={confirmPassword} error={!samePasswords} onChange={handleConfirmPasswordChange} onKeyDown={handleKeyDown} />
           <div hidden={passwordTips} className='w-xs border-1 text-center border-gray-300 rounded-xl shadow-lg'>
             <div>{`Your password must contain:`}</div>
             <div className={accepted(passwordHas12)}>{`At least 12 characters`}</div>

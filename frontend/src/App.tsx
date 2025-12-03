@@ -6,13 +6,12 @@ import HomePage from './pages/homePage';
 const router = createBrowserRouter(createRoutesFromElements(
   <>
     <Route path="/" element={<LoginPage />} />
-    <Route path="/signup" element={<SignupPage /> } />
+    <Route path="/signup" element={<SignupPage />} />
     <Route path="/homepage" element={<HomePage />} />
   </>
 ));
 
 function App() {
-
   return (
     <RouterProvider router={router} />
   )

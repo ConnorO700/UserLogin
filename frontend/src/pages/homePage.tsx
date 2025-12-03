@@ -12,6 +12,7 @@ interface User {
 }
 
 function homePage() {
+    const api = ApiEndpoints();
     const loction = useLocation();
     const { id } = loction.state || 0;
 
@@ -22,7 +23,7 @@ function homePage() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const user = await ApiEndpoints.getUserById(id);
+            const user = await api.getUserById(id);
 
             if (user) {
                 setName(user.name);
