@@ -4,16 +4,6 @@ import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
 import { useNavigate } from 'react-router-dom';
 import type { ChangeEvent } from 'react';
-interface User {
-  name: string,
-  email: string,
-  password: string
-}
-
-interface label {
-  text: string,
-  style: string
-}
 
 function signupPage() {
   const api = ApiEndpoints();

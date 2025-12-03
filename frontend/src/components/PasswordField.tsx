@@ -1,4 +1,3 @@
-import React from 'react'
 import type { ChangeEvent, KeyboardEvent } from 'react';
 interface ComponentProps {
     label: string,

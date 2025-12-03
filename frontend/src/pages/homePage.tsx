@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
 import { Link, useLocation } from 'react-router-dom';
 import type { ChangeEvent } from 'react';
-
-interface User {
-    name: string,
-    email: string,
-    password: string,
-}
 
 function homePage() {
     const api = ApiEndpoints();
