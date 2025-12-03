@@ -8,7 +8,7 @@ features:
 > on successful login, user JWT is returned and used for further authentication
 
 
-a very minimal login form
+a very minimal login form, 'Login' is a logo
 
 <img width="618" height="450" alt="image" src="https://github.com/user-attachments/assets/255d8617-cf6e-4daf-8c6a-5f2360e61639" />
 
