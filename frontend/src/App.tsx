@@ -2,6 +2,8 @@ import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } 
 import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
 import HomePage from './pages/homePage';
+import { useState } from 'react'
+import AccessTokenContext from './contexts/AccessTokenContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <>
@@ -11,9 +13,13 @@ const router = createBrowserRouter(createRoutesFromElements(
   </>
 ));
 
+
 function App() {
+  const [accessToken, setAccessToken] = useState<string>("");
   return (
-    <RouterProvider router={router} />
+    <AccessTokenContext.Provider value={{ accessToken, setAccessToken }}>
+      <RouterProvider router={router} />
+    </AccessTokenContext.Provider>
   )
 }
 

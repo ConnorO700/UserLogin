@@ -17,8 +17,7 @@ function checkSumGen(head: string, body: string) {
     const localizedDate = currentDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-        hour: 'numeric'
+        day: 'numeric'
     });
     var hash = crypto.createHmac('sha512', key + localizedDate);
     var checkSum = hash.update(checkSumStr).digest('base64');

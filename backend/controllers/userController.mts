@@ -8,6 +8,8 @@ interface User {
     id: string,
     name: string,
     email: string,
+    hash?: string,
+    salt?: string
 }
 
 interface LoginAttempt {
@@ -15,12 +17,8 @@ interface LoginAttempt {
     password: string
 }
 
-function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
-    const newObj = { ...obj };
-    for (const key of keys) {
-        delete newObj[key];
-    }
-    return newObj as Omit<T, K>;
+const GetPublicUser = (user: User) => {
+    return { id: user.id, name: user.name, email: user.email }
 }
 
 const trimUser = (user: Pick<User, 'name' | 'email'>) => {
@@ -62,9 +60,20 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     }
     const currentUser: User = { id: user.id, email: user.email, name: user.name }
     const token = jwt.encode(currentUser);
-    console.log(hashEqual);
     res.status(200)
         .json({ user: currentUser, token: token })
+}
+
+const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const user = await User.findById(userId).exec();
+    console.log(`user:${user}`);
+    if (!user) {
+        const error = new ResponseError(404, "No such user exists");
+        return next(error);
+    }
+    res.status(200)
+        .json(GetPublicUser(user));
 }
 
 const editUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -107,6 +116,7 @@ async function GetUserByEmail(email: string, next: NextFunction) {
 const userController = {
     createUser: createUser,
     loginUser: loginUser,
+    getUserById: getUserById,
     editUser: editUser,
     deleteUser: deleteUser,
 }

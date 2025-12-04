@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import axios from 'axios'
+import AccessTokenContext from './contexts/AccessTokenContext'
 
 const baseurl = import.meta.env.VITE_BACKEND_PORT;
 
@@ -9,21 +10,24 @@ interface User {
     password: string,
 }
 
+
 const ApiEndpoints = () => {
-    const [token, setToken] = useState<string>("");
-    const createUser = (body: User) => { return Post(`${baseurl}/api/create`, body) };
+    const { accessToken, setAccessToken } = useContext(AccessTokenContext);
+    const createUser = (body: User) => { return Post(`/api/create`, body) };
     const login = async (body: Omit<User, 'name'>) => {
-        const res = await Post(`${baseurl}/api/login`, body);
-        setToken(res.token);
+        const res = await Post(`/api/login`, body);
+        console.log(`setting Token: ${res.token}`);
+        await setAccessToken(res.token);
         return res;
     };
-    const getUserById = (id: number) => { return Get(`${baseurl}/api/users/${id}`) };
+    const getUserById = (id: string) => { return Get(`/api/users/${id}`) };
 
     async function Get(url: string) {
         try {
-            var result = await axios.get(url, {
+            console.log(`using token: ${accessToken}`);
+            var result = await axios.get(`${baseurl}${url}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then((response: any) => {
@@ -38,9 +42,10 @@ const ApiEndpoints = () => {
 
     async function Post(url: string, body: any) {
         try {
-            var result = await axios.post(url, body, {
+            console.log(`using token: ${accessToken}`);
+            var result = await axios.post(`${baseurl}${url}`, body, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then((response: any) => {

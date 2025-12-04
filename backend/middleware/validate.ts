@@ -2,8 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from '../util/jwtHandler.mts'
 
 const jwtValidator = (req: Request, res: Response, next: NextFunction) => {
-    console.log("jwt middleware");
-    const token = req.token;
+    const token = req.headers.authorization?.slice(7) ?? "";
     if (token) {
         const obj = jwt.decode(token);
         if (obj) {
