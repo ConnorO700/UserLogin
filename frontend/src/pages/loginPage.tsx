@@ -16,7 +16,6 @@ function loginPage() {
 
     const handleLogin = async () => {
         const success = await api.login({ email: email, password: password });
-        console.log(`trying to login`);
         if (success.token) {
             navigate('/homepage', { state: { id: success.user.id } });
         }

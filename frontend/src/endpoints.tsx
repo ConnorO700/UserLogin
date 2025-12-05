@@ -16,7 +16,6 @@ const ApiEndpoints = () => {
     const createUser = (body: User) => { return Post(`/api/create`, body) };
     const login = async (body: Omit<User, 'name'>) => {
         const res = await Post(`/api/login`, body);
-        console.log(`setting Token: ${res.token}`);
         await setAccessToken(res.token);
         return res;
     };
@@ -24,7 +23,6 @@ const ApiEndpoints = () => {
 
     async function Get(url: string) {
         try {
-            console.log(`using token: ${accessToken}`);
             var result = await axios.get(`${baseurl}${url}`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -42,7 +40,6 @@ const ApiEndpoints = () => {
 
     async function Post(url: string, body: any) {
         try {
-            console.log(`using token: ${accessToken}`);
             var result = await axios.post(`${baseurl}${url}`, body, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`

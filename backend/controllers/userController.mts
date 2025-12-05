@@ -67,7 +67,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
     const user = await User.findById(userId).exec();
-    console.log(`user:${user}`);
+
     if (!user) {
         const error = new ResponseError(404, "No such user exists");
         return next(error);
