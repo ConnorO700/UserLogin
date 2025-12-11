@@ -1,25 +1,19 @@
 import { useState, useContext } from 'react'
 import axios from 'axios'
 import AccessTokenContext from './contexts/AccessTokenContext'
-
+import type { ICreateUser, ILoginAttempt, IEmail } from '../../interfaces.mjs'
 const baseurl = import.meta.env.VITE_BACKEND_PORT;
-
-interface User {
-    name: string,
-    email: string,
-    password: string,
-}
-
 
 const ApiEndpoints = () => {
     const { accessToken, setAccessToken } = useContext(AccessTokenContext);
-    const createUser = (body: User) => { return Post(`/api/create`, body) };
-    const login = async (body: Omit<User, 'name'>) => {
+    const createUser = (body: ICreateUser) => { return Post(`/api/create`, body) };
+    const login = async (body: ILoginAttempt) => {
         const res = await Post(`/api/login`, body);
         await setAccessToken(res.token);
         return res;
     };
     const getUserById = (id: string) => { return Get(`/api/users/${id}`) };
+    const isEmailUsed = (body: IEmail) => { return Post(`/api/users/email`, body) }
 
     async function Get(url: string) {
         try {
@@ -59,6 +53,7 @@ const ApiEndpoints = () => {
         createUser: createUser,
         login: login,
         getUserById: getUserById,
+        isEmailUsed: isEmailUsed,
     })
 
 

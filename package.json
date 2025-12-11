@@ -1,0 +1,11 @@
+{
+  "name": "login-project",
+  "scripts": {
+    "frontend-dev": "cd backend && npm run dev",
+    "backend-dev": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run frontend-dev\" \"npm run backend-dev\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

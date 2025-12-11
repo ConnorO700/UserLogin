@@ -8,9 +8,6 @@ import errorHandler from './middleware/error.mts';
 import bearerToken from 'express-bearer-token';
 import db from './MongoDB.mjs'
 
-export interface ProcessEnv {
-    [key: string]: string | undefined
-}
 const app = express();
 const port = process.env.PORT;
 

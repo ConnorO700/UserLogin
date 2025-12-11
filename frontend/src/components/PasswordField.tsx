@@ -1,5 +1,5 @@
 import type { ChangeEvent, KeyboardEvent } from 'react';
-interface ComponentProps {
+interface IComponentProps {
     label: string,
     password: string,
     error?: boolean,
@@ -10,9 +10,8 @@ interface ComponentProps {
 
 const b = () => {};
 
-function PasswordField({ label, password, error = false, onChange = b, onSelect = b, onKeyDown = b }: ComponentProps) {
-    const styles = error ? 'textInputBoxError shaking-element' : 'textInputBox'
-
+function PasswordField({ label, password, error = false, onChange = b, onSelect = b, onKeyDown = b }: IComponentProps) {
+    const styles = error ? 'textInputBoxError' : 'textInputBox'
 
     return (
         <div className={styles}>

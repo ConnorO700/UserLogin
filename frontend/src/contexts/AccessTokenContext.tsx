@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { createContext } from 'react'
-interface AccessTokenType {
+interface IAccessTokenType {
     accessToken: string | null,
     setAccessToken: Dispatch<SetStateAction<string>>
 }
 
-const AccessTokenContext = createContext<AccessTokenType>({ accessToken: "", setAccessToken: () => { } });
+const AccessTokenContext = createContext<IAccessTokenType>({ accessToken: "", setAccessToken: () => { } });
 
 export default AccessTokenContext;

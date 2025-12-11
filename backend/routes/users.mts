@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/:id',  jwtMiddleware, lc.getUserById);
 
+router.post('/email', lc.emailIsUsed);
+
 router.put('/', jwtMiddleware, lc.editUser);
 
 router.delete('/', jwtMiddleware, lc.deleteUser);

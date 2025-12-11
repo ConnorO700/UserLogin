@@ -3,30 +3,19 @@ import ResponseError from '../middleware/ResponseError.mts';
 import jwt from '../util/jwtHandler.mts'
 import User from '../models/User.mjs'
 import passwordHandler from '../util/passwordHandler.mts';
+import { IUser, ICreateUser, ILoginAttempt } from '../../interfaces.mjs'
 
-interface User {
-    id: string,
-    name: string,
-    email: string,
-    hash?: string,
-    salt?: string
-}
 
-interface LoginAttempt {
-    email: string,
-    password: string
-}
-
-const GetPublicUser = (user: User) => {
+const GetPublicUser = (user: IUser) => {
     return { id: user.id, name: user.name, email: user.email }
 }
 
-const trimUser = (user: Pick<User, 'name' | 'email'>) => {
+const trimUser = (user: Pick<ICreateUser, 'name' | 'email'>) => {
     return { name: user.name.trim(), email: user.email.trim() }
 }
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
-    const newUser: Pick<User, 'name' | 'email'> = trimUser(req.body);
+    const newUser: Pick<ICreateUser, 'name' | 'email'> = trimUser(req.body);
     const newUserPassword: string = req.body.password ?? "";
     if (!newUser || (newUser.email.length === 0 || newUserPassword.length === 0 || newUser.name.length === 0)) {
         const error = new ResponseError(400, "request body was missing or incomplete");
@@ -40,13 +29,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     }
     const userSecret = passwordHandler.encode(newUserPassword);
 
-    User.create({ ...newUser, hash: userSecret.hash, salt: userSecret.salt });
+    User.create({ ...newUser, role: 'User', hash: userSecret.hash, salt: userSecret.salt });
     res.status(201)
         .json(newUser);
 }
 
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
-    const login: LoginAttempt = req.body;
+    const login: ILoginAttempt = req.body;
     const user = await User.findOne({ email: login.email });
     if (!user) {
         const error = new ResponseError(404, "No such user exists");
@@ -58,7 +47,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
         const error = new ResponseError(401, "Unauthorized!");
         return next(error);
     }
-    const currentUser: User = { id: user.id, email: user.email, name: user.name }
+    const currentUser: IUser = { id: user.id, email: user.email, name: user.name }
     const token = jwt.encode(currentUser);
     res.status(200)
         .json({ user: currentUser, token: token })
@@ -76,8 +65,14 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
         .json(GetPublicUser(user));
 }
 
+const emailIsUsed = async (req: Request, res: Response, next: NextFunction) => {
+    const email = req.body.email;
+    const user = await User.findOne({ email: email });
+    res.status(200).json({found:user != null});
+}
+
 const editUser = async (req: Request, res: Response, next: NextFunction) => {
-    const newUser: User = req.body;
+    const newUser: IUser = req.body;
     const userToUpdate = await User.findOne({ email: newUser.email });
     if (!userToUpdate) {
         const error = new ResponseError(404, "No such user exists");
@@ -90,7 +85,7 @@ const editUser = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    const user: User = req.body;
+    const user: IUser = req.body;
     const userToDelete = await User.findOne({ email: user.email });
     if (!userToDelete) {
         const error = new ResponseError(404, "No such user exists");
@@ -117,6 +112,7 @@ const userController = {
     createUser: createUser,
     loginUser: loginUser,
     getUserById: getUserById,
+    emailIsUsed: emailIsUsed,
     editUser: editUser,
     deleteUser: deleteUser,
 }

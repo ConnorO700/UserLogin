@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
 import { useNavigate } from 'react-router-dom';
 import type { ChangeEvent } from 'react';
+import { debounce } from '../util/utilFunctions.mts';
 
 function signupPage() {
   const api = ApiEndpoints();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailValid, setEmailValid] = useState(true);
+  const [emailUsed, setEmailUsed] = useState(false);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -18,6 +21,7 @@ function signupPage() {
   const lowercaseRegex = /[a-z]/;
   const numberRegex = /[0-9]/;
   const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?~]/;
+  const emailRegex = /.+[@].+[.].+/;
 
   const [passwordHas12, setPasswordHas12] = useState(false);
   const [passwordHasLower, setPasswordHasLower] = useState(false);
@@ -27,6 +31,7 @@ function signupPage() {
   const [passwordTips, setPasswordTips] = useState(true);
   const submitConditions = (
     email.length != 0 &&
+    !emailUsed &&
     password.length != 0 &&
     name.length != 0 &&
     password == confirmPassword &&
@@ -44,6 +49,23 @@ function signupPage() {
     setConfirmPassword("");
     setSamePasswords(true);
   }
+
+  const checkIfEmailIsUsed = () => {
+    console.log("checking if email is used");
+    console.log(`email checked:${email}`);
+  }
+  const debouncedCheckIfEmailIsUsed = debounce(checkIfEmailIsUsed, 3000);
+
+  useEffect(() => {
+    async () => {
+      console.log(email);
+      if (email != "") {
+        setEmailValid(emailRegex.test(email))
+        setEmailUsed(await api.isEmailUsed({ email }));
+        debouncedCheckIfEmailIsUsed();
+      }
+    }
+  }, [email]);
 
   const handleSubmitClick = () => {
     if (submitConditions) {
@@ -89,7 +111,9 @@ function signupPage() {
             Sign up
           </div>
           <FormField input={name} setInput={setName} label="Name:" />
-          <FormField input={email} setInput={setEmail} label="Email:" />
+          <FormField input={email} setInput={setEmail} error={emailUsed || !emailValid} label="Email:" />
+          {emailUsed ? <div className='w-xs text-center text-red-400'>Email already in use!</div> : <></>}
+          {!emailValid ? <div className='w-xs text-center text-red-400'>Enter a valid email address!</div> : <></>}
           <PasswordField label="Password:" password={password} error={!samePasswords} onChange={handlePasswordChange} onSelect={() => { setPasswordTips(false) }} />
           <PasswordField label="Confirm:" password={confirmPassword} error={!samePasswords} onChange={handleConfirmPasswordChange} onKeyDown={handleKeyDown} />
           <div hidden={passwordTips} className='w-xs border-1 text-center border-gray-300 rounded-xl shadow-lg'>
