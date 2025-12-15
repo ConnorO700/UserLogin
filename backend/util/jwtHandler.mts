@@ -50,7 +50,7 @@ function decode(str: string) {
 
 const jwtHandler = {
     encode: encode,
-    decode: decode
+    decode: decode,
 };
 
 export default jwtHandler;

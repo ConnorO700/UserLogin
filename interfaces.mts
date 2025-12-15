@@ -1,13 +1,13 @@
 interface IUserLite {
-    id: string,
+    id?: string,
     name: string,
     email: string
 }
 
 
 export interface IUser extends IUserLite {
-    role?: string,
     password?: string,
+    role: string,
     hash?: string,
     salt?: string
 }
@@ -24,4 +24,13 @@ export interface ILoginAttempt {
 
 export interface IEmail {
     email: string
+}
+
+declare global {
+  namespace Express {
+    // Extend the Request interface
+    export interface Request {
+      user: IUser; // Add an optional 'user' property of type User
+    }
+  }
 }

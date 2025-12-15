@@ -6,6 +6,7 @@ const jwtValidator = (req: Request, res: Response, next: NextFunction) => {
     if (token) {
         const obj = jwt.decode(token);
         if (obj) {
+            req.user = obj;
             next();
         }
         else {
