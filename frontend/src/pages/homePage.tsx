@@ -1,35 +1,16 @@
 import { useState, useEffect } from 'react';
-import FormField from '../components/FormField';
-import PasswordField from '../components/PasswordField';
 import ApiEndpoints from '../endpoints';
-import { Link, useLocation } from 'react-router-dom';
-import type { ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
+import UserTileList from '../components/UserTileList'
+import type { IUser } from '../../../interfaces.mjs'
 
 function homePage() {
     const api = ApiEndpoints();
-    const loction = useLocation();
-    const { id } = loction.state || 0;
+    const [users, setUsers] = useState<IUser[]>([]);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const user = await api.getUserById(id);
-
-            if (user) {
-                setName(user.name);
-                setEmail(user.email);
-                setPassword(user.password);
-            }
-        }
-        fetchUser();
-    }, []);
-
-    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
+    const fetchUsers = async () => {
+        const res = await api.getAllUsers();
+        setUsers(res);
     }
 
     return (
@@ -37,12 +18,9 @@ function homePage() {
             <div className='page'>
                 <div className='bg-white w-1/2 h-2/3 shadow-lg rounded-xl'>
                     <div className='flex flex-col items-center justify-center mt-auto'>
-                        <FormField input={name} setInput={setName} label="Name:" />
-                        <FormField input={email} setInput={setEmail} label="Email:" />
-                        <PasswordField label="Password:" password={password} onChange={handlePasswordChange} />
-                        <div className='noSelect buttonEdit'>Edit User</div>
-                        <div className='noSelect buttonDelete'>Delete User</div>
-                        <Link to="/" className='noSelect buttonSubmit'>Logout</Link>
+                        <div className='noSelect buttonSubmit' onClick={fetchUsers}>Show Users</div>
+                        <UserTileList users={users} />
+                        <Link to="/" className='noSelect buttonEdit'>Logout</Link>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,8 @@ import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
 import HomePage from './pages/homePage';
 import { useState } from 'react'
-import AccessTokenContext from './contexts/AccessTokenContext'
+import AccessTokenContext from './contexts/UserContext'
+import type { IUser } from '../../interfaces.mts';
 
 const router = createBrowserRouter(createRoutesFromElements(
   <>
@@ -16,8 +17,9 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 function App() {
   const [accessToken, setAccessToken] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   return (
-    <AccessTokenContext.Provider value={{ accessToken, setAccessToken }}>
+    <AccessTokenContext.Provider value={{ currentUser, setCurrentUser, accessToken, setAccessToken }}>
       <RouterProvider router={router} />
     </AccessTokenContext.Provider>
   )

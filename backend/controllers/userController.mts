@@ -1,10 +1,9 @@
 import type { Request as Req, Response as Res, NextFunction as Next } from 'express';
 import ResponseError from '../middleware/ResponseError.mts';
-import jwt from '../util/jwtHandler.mts'
 import User from '../models/User.mjs'
-import passwordHandler from '../util/passwordHandler.mts';
+import secretHandler from '../util/SecretHandler.mts';
 import { IUser, ICreateUser, ILoginAttempt } from '../../interfaces.mjs'
-import mask from '../util/masking.mjs'
+import mask from '../util/MaskingUtil.mjs'
 
 
 const GetPublicUser = (user: IUser) => {
@@ -28,11 +27,24 @@ const createUser = async (req: Req, res: Res, next: Next) => {
         const error = new ResponseError(400, "This email is already in use!");
         return next(error);
     }
-    const userSecret = passwordHandler.encode(newUserPassword);
+    const userSecret = secretHandler.hashPassword(newUserPassword);
 
     User.create({ ...newUser, role: 'User', hash: userSecret.hash, salt: userSecret.salt });
     res.status(201)
         .json(newUser);
+}
+
+const refresh = async (req: Req, res: Res, next: Next) => {
+    const refreshToken: string = req.body;
+    const user = secretHandler.decode(refreshToken, true);
+    if (!user) {
+        const error = new ResponseError(401, "Unauthorized!")
+        return next(error);
+    }
+    const currentUser: IUser = { id: user.id, email: user.email, name: user.name, role: user.role }
+    const token = secretHandler.encode(currentUser, false);
+    res.status(200)
+        .json({ user: currentUser, token: token })
 }
 
 const loginUser = async (req: Req, res: Res, next: Next) => {
@@ -43,13 +55,13 @@ const loginUser = async (req: Req, res: Res, next: Next) => {
         return next(error);
     }
 
-    const hashEqual = passwordHandler.check(login.password, user.hash, user.salt);
+    const hashEqual = secretHandler.checkPassword(login.password, user.hash, user.salt);
     if (!hashEqual) {
         const error = new ResponseError(401, "Unauthorized!");
         return next(error);
     }
     const currentUser: IUser = { id: user.id, email: user.email, name: user.name, role: user.role }
-    const token = jwt.encode(currentUser);
+    const token = secretHandler.encode(currentUser, false);
     res.status(200)
         .json({ user: currentUser, token: token })
 }
@@ -69,7 +81,7 @@ const getUserById = async (req: Req, res: Res, next: Next) => {
 const getAllUsers = async (req: Req, res: Res, next: Next) => {
     let users = null;
     if (req.user.role === 'Admin') {
-        users = await User.find({}).select('-__v');
+        users = await User.find({}).select('-salt -hash -__v');
     }
     else {
         users = await User.find({}).select('-salt -hash -__v -role');
@@ -105,13 +117,13 @@ const editUser = async (req: Req, res: Res, next: Next) => {
 }
 
 const deleteUser = async (req: Req, res: Res, next: Next) => {
-    const user: IUser = req.body;
-    const userToDelete = await User.findOne({ email: user.email });
+    const userId = req.params.id;
+    const userToDelete = await User.findById(userId).exec();
     if (!userToDelete) {
         const error = new ResponseError(404, "No such user exists");
         return next(error);
     }
-    const deletedUser = await User.findByIdAndDelete(userToDelete.id);
+    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
     console.log(`DELETED USER:${deletedUser}`)
     res.status(200)
         .end();
@@ -136,6 +148,7 @@ const userController = {
     emailIsUsed: emailIsUsed,
     editUser: editUser,
     deleteUser: deleteUser,
+    refresh: refresh,
 }
 
 

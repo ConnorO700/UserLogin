@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import login from './routes/login.mts'
-import users from './routes/users.mts';
-import logger from './middleware/logger.mts';
-import notFound from './middleware/notFound.mts';
-import errorHandler from './middleware/error.mts';
+import authRouter from './routes/AuthRouter.mjs'
+import userRouter from './routes/UserRouter.mjs';
+import logger from './middleware/Logger.mts';
+import notFound from './middleware/NotFound.mts';
+import errorHandler from './middleware/Error.mts';
 import bearerToken from 'express-bearer-token';
 import db from './MongoDB.mjs'
 
@@ -19,9 +19,9 @@ app.use(bearerToken());
 
 app.use(logger);
 
-app.use('/api', login);
+app.use('/api', authRouter);
 
-app.use('/api/users', users)
+app.use('/api/users', userRouter)
 
 app.use(notFound);
 app.use(errorHandler);
